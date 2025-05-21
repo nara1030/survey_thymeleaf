@@ -1,0 +1,15 @@
+spring:
+  application:
+    name: survey_thymeleaf
+  thymeleaf:
+    cache: false # 개발중 캐싱 반영 x
+    prefix: classpath:/templates/
+    suffix: .html
+    mode: HTML
+
+server:
+  servlet:
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true

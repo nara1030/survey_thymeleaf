@@ -1,0 +1,54 @@
+<div th:fragment="headerFragment" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+    <nav class="navbar navbar-light bg-light border-bottom">
+        <div class="container-fluid justify-content-end">
+            <div th:if="${#authentication == null or #authentication.name == 'anonymousUser'}">
+                <a class="btn btn-outline-primary me-2" th:href="@{/signup}">회원가입</a>
+                <a class="btn btn-primary" th:href="@{/login}">로그인</a>
+            </div>
+            <div th:if="${#authentication != null and #authentication.name != 'anonymousUser'}">
+                <span class="me-3" th:text="'환영합니다, ' + ${#authentication.name} + '님'"></span>
+                <a href="#" class="btn btn-danger" onclick="document.getElementById('logoutForm').submit(); return false;">로그아웃</a>
+                <form id="logoutForm" th:action="@{/logout}" method="post" style="display: none;"></form>
+            </div>
+        </div>
+    </nav>
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">로고</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="mainNavbar">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item dropdown" sec:authorize="hasRole('ADMIN')">
+                        <a class="nav-link dropdown-toggle" href="/register" id="menuA" role="button" data-bs-toggle="dropdown">
+                            설문 관리
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="/register">설문 작성</a></li>
+                            <li><a class="dropdown-item" href="#">설문 발송</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown" sec:authorize="hasAnyRole('USER', 'ADMIN')">
+                        <a class="nav-link dropdown-toggle" href="#" id="menuB" role="button" data-bs-toggle="dropdown">
+                            통계
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="#"  sec:authorize="hasRole('ADMIN')">설문 현황</a></li>
+                            <li><a class="dropdown-item" href="#"  sec:authorize="hasAnyRole('USER', 'ADMIN')">기타</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown" sec:authorize="hasRole('USER')">
+                        <a class="nav-link dropdown-toggle" href="#" id="menuC" role="button" data-bs-toggle="dropdown">
+                            설문 응답
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="#">답변 작성</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+</div>
