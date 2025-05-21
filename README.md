@@ -35,8 +35,13 @@
    (시큐리티도 세션에 자동적으로 저장하긴 하나, 여기서 말하는 세션은 개발자가 직접 생성/삭제해준다는 의미다.)
 6. 이때 스프링 시큐리티와 타임리프를 연동하기 위해 다음 의존성(thymeleaf-extras-springsecurity6)을 추가해야 한다.
    시큐리티 필터 체인에서 서버측 권한별 URL 제어했다면, 화면에서는 다음과 같이 권한별 노출을 제어할 수 있다.
-   <div th:if="${#authentication != null and #authentication.name != 'anonymousUser'}">
-   <li class="nav-item dropdown" sec:authorize="hasRole('ADMIN')">
+   A) <div th:if="${#authentication != null and #authentication.name != 'anonymousUser'}">
+   B) <li class="nav-item dropdown" sec:authorize="hasRole('ADMIN')">
+   정리하면 A와 같이 표준 타임리프 EL 문법을 통해 인증 정보에 직접 접근할 수 있고,
+   B와 같이 sec:authorize를 통해 해당 태그 출력 여부를 제어할 수 있다.
+   한편 아래 C와 같이 sec:authentication을 통해 EL을 대신해 인증 정보 표시할 수도 있다.
+   C) <span sec:authentication="authorities"></span>
+      <span th:text="${#authentication.authorities}"></span>
 7. 예외 처리 핸들러를 시큐리티 필터 체인에 추가했다.
    기존 Spring MVC와는 달리 필터에서 발생하는 예외의 경우 컨트롤러까지 도달하지 못하기 때문에
    @ControllerAdvice, @ExceptionHandler로 예외 처리 불가하다.
@@ -58,6 +63,34 @@
     여기서 계정당 하나의 세션만 허용한다든지, 중복 로그인시 리다이렉트된다든지 설정이 가능하다.
     (추후 테스트해보는 걸로...)
 12. .
+
+----
+시큐리티 Authentication 객체 관련 구조다.
+
+Authentication
+├── name: "username"
+├── authorities: [ROLE_USER, ROLE_ADMIN]
+├── principal: UserDetails 객체 (예: org.springframework.security.core.userdetails.User)
+│   ├── username
+│   ├── password
+│   ├── authorities
+│   ├── enabled
+│   └── ...
+
+즉, 다음과 같은 표현이 가능하다.
+
+<!-- 현재 사용자 이름 -->
+<span sec:authentication="name"></span>
+<!-- == #authentication.name -->
+
+<!-- principal 안에 있는 username -->
+<span sec:authentication="principal.username"></span>
+<!-- == #authentication.principal.username -->
+
+<!-- principal이 가지고 있는 authorities -->
+<span sec:authentication="principal.authorities"></span>
+<!-- == #authentication.principal.authorities -->
+
 ```
 
 ##### [목차로 이동](#목차)
